@@ -250,9 +250,11 @@ const createFilmDetailsTemplate = () => (
 );
 
 const render = (container, template, count = 1, place = `beforeend`) => {
-  for (let i = 1; i <= count; i++) {
-    container.insertAdjacentHTML(place, template);
+  let resultTemplate = ``;
+  for (let i = 0; i < count; i++) {
+    resultTemplate = resultTemplate + template;
   }
+  container.insertAdjacentHTML(place, resultTemplate);
 };
 
 const bodyElement = document.querySelector(`body`);
