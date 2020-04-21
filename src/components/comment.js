@@ -2,7 +2,7 @@ import * as moment from 'moment';
 
 export const createCommentTemplate = (comment) => {
   const {user, emoji, date, text} = comment;
-  const relativeDate = moment(date).format(`YYYY/MM/DD hh:mm`);
+  const formattedDate = moment(date).format(`YYYY/MM/DD hh:mm`);
   return (
     `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
@@ -12,7 +12,7 @@ export const createCommentTemplate = (comment) => {
         <p class="film-details__comment-text">${text}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${user}</span>
-          <span class="film-details__comment-day">${relativeDate}</span>
+          <span class="film-details__comment-day">${formattedDate}</span>
           <button class="film-details__comment-delete">Delete</button>
         </p>
       </div>

@@ -11,8 +11,7 @@ const EMOJI = [
   `angry`,
 ];
 
-const USERS =
-[
+const USERS = [
   `Tim Macoveev`,
   `John Doe`,
   `Elon Musk`,
