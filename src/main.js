@@ -5,6 +5,7 @@ import Comment from './components/comment';
 import FilmsSectionComponent from './components/films-section';
 import AllFilmsContainerComponent from './components/all-films-container';
 import ExtraFilmsContainerComponent from './components/extra-films-container';
+import NoFilmsComponent from './components/no-films';
 import FilmCardComponent from './components/film-card';
 import ShowMoreButtonComponent from './components/show-more-btn';
 import FilmsCountComponent from './components/films-count';
@@ -116,15 +117,21 @@ render(mainElement, new FilmsSectionComponent().getElement(), RenderPosition.BEF
 const filmsSectionElement = mainElement.querySelector(`.films`);
 
 const allFilmsContainerComponent = new AllFilmsContainerComponent();
+const noFilmsComponent = new NoFilmsComponent();
 render(filmsSectionElement, allFilmsContainerComponent.getElement(), RenderPosition.BEFOREEND);
-renderAllFilmsList(allFilmsContainerComponent, allFilms);
 
-EXTRA_FILMS_LISTS.forEach((list) => {
-  const extraFilmsContainerComponent = new ExtraFilmsContainerComponent(list);
-  const extraFilms = generateFilms(EXTRA_FILMS_COUNT);
-  render(filmsSectionElement, extraFilmsContainerComponent.getElement(), RenderPosition.BEFOREEND);
-  renderExtraFilmsList(extraFilmsContainerComponent, extraFilms);
-});
+if (allFilms.length) {
+  renderAllFilmsList(allFilmsContainerComponent, allFilms);
+
+  EXTRA_FILMS_LISTS.forEach((list) => {
+    const extraFilmsContainerComponent = new ExtraFilmsContainerComponent(list);
+    const extraFilms = generateFilms(EXTRA_FILMS_COUNT);
+    render(filmsSectionElement, extraFilmsContainerComponent.getElement(), RenderPosition.BEFOREEND);
+    renderExtraFilmsList(extraFilmsContainerComponent, extraFilms);
+  });
+} else {
+  render(filmsSectionElement, noFilmsComponent.getElement(), RenderPosition.BEFOREEND);
+}
 
 const footerStatisticsElement = document.querySelector(`.footer__statistics`);
 render(footerStatisticsElement, new FilmsCountComponent(ALL_FILMS_COUNT).getElement(), RenderPosition.BEFOREEND);
