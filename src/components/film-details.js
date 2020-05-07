@@ -1,5 +1,14 @@
 import * as moment from 'moment';
-import AbstractComponent from "./abstract-component";
+import AbstractSmartComponent from "./abstract-smart-component";
+import {ControlsElement} from '../utils/controls';
+
+const createControlsElementMarkup = (element, isActive = false) => {
+  const activeAttribute = isActive ? `checked` : ``;
+  return (
+    `<input type="checkbox" class="film-details__control-input visually-hidden" id="${element.name}" name="${element.name}" ${activeAttribute}>
+    <label for="${element.name}" class="film-details__control-label film-details__control-label--${element.name}">${element.text}</label>`
+  );
+};
 
 const createFilmDetailsTemplate = (film) => {
   const {
@@ -16,6 +25,9 @@ const createFilmDetailsTemplate = (film) => {
     ageLimit,
     country,
     commentsCount,
+    isInWatchList,
+    isWatched,
+    isFavorite,
   } = film;
   const releaseDateString = moment(release).format(`DD MMMM YYYY`);
   const writersString = writers.join(`, `);
@@ -24,6 +36,11 @@ const createFilmDetailsTemplate = (film) => {
   const genresMarkup = genres.map((genre) => (
     `<span class="film-details__genre">${genre}</span>`
   )).join(`\n`);
+
+  const watchListInput = createControlsElementMarkup(ControlsElement.WATCHLIST, isInWatchList);
+  const watchedInput = createControlsElementMarkup(ControlsElement.WATCHED, isWatched);
+  const favoriteInput = createControlsElementMarkup(ControlsElement.FAVORITE, isFavorite);
+
   return (
     `<section class="film-details">
       <form class="film-details__inner" action="" method="get">
@@ -89,14 +106,9 @@ const createFilmDetailsTemplate = (film) => {
           </div>
 
           <section class="film-details__controls">
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
-            <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
-
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
-            <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
-
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
-            <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
+            ${watchListInput}
+            ${watchedInput}
+            ${favoriteInput}
           </section>
         </div>
 
@@ -142,19 +154,48 @@ const createFilmDetailsTemplate = (film) => {
   );
 };
 
-export default class FilmDetails extends AbstractComponent {
+export default class FilmDetails extends AbstractSmartComponent {
   constructor(film) {
     super();
 
     this._film = film;
+    this._closeHandler = null;
+
+    // this._subscribeOnEvents();
   }
 
   getTemplate() {
     return createFilmDetailsTemplate(this._film);
   }
 
+  // recoveryListeners() {
+  //   this.setCloseButtonClickHandler(this._closeHandler);
+  //   this._subscribeOnEvents();
+  // }
+
+  // rerender() {
+  //   super.rerender();
+  // }
+
   setCloseButtonClickHandler(handler) {
     const closeButtonElement = this.getElement().querySelector(`.film-details__close-btn`);
     closeButtonElement.addEventListener(`click`, handler);
+
+    this._closeHandler = handler;
+  }
+
+  setWatchListInputClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__control-label--watchlist`)
+      .addEventListener(`click`, handler);
+  }
+
+  setWatchedInputClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__control-label--watched`)
+      .addEventListener(`click`, handler);
+  }
+
+  setFavoriteInputClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__control-label--favorite`)
+      .addEventListener(`click`, handler);
   }
 }
