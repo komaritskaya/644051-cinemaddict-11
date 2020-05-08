@@ -10,7 +10,7 @@ const createControlsElementMarkup = (element, isActive = false) => {
   );
 };
 
-const createFilmDetailsTemplate = (film) => {
+const createFilmDetailsTemplate = (film, options = {}) => {
   const {
     name,
     poster,
@@ -25,10 +25,18 @@ const createFilmDetailsTemplate = (film) => {
     ageLimit,
     country,
     commentsCount,
+    // isInWatchList,
+    // isWatched,
+    // isFavorite,
+  } = film;
+
+  const {
+    // userRating,
     isInWatchList,
     isWatched,
     isFavorite,
-  } = film;
+  } = options;
+
   const releaseDateString = moment(release).format(`DD MMMM YYYY`);
   const writersString = writers.join(`, `);
   const actorsString = actors.join(`, `);
@@ -161,21 +169,37 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._film = film;
     this._closeHandler = null;
 
-    // this._subscribeOnEvents();
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
-    return createFilmDetailsTemplate(this._film);
+    // return createFilmDetailsTemplate(this._film);
+    return createFilmDetailsTemplate(this._film, {
+      // userRating: this._userRating,
+      isInWatchList: this._isInWatchList,
+      isWatched: this._isWatched,
+      isFavorite: this._isFavorite,
+    });
   }
 
-  // recoveryListeners() {
-  //   this.setCloseButtonClickHandler(this._closeHandler);
-  //   this._subscribeOnEvents();
-  // }
+  recoveryListeners() {
+    this.setCloseButtonClickHandler(this._closeHandler);
+    this._subscribeOnEvents();
+  }
 
-  // rerender() {
-  //   super.rerender();
-  // }
+  rerender() {
+    super.rerender();
+  }
+
+  reset() {
+    const film = this._film;
+    // this._userRating = film.userRating;
+    this._isInWatchList = film.isInWatchList;
+    this._isWatched = film.isWatched;
+    this._isFavorite = film.isFavorite;
+
+    this.rerender();
+  }
 
   setCloseButtonClickHandler(handler) {
     const closeButtonElement = this.getElement().querySelector(`.film-details__close-btn`);
@@ -184,18 +208,44 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._closeHandler = handler;
   }
 
-  setWatchListInputClickHandler(handler) {
-    this.getElement().querySelector(`.film-details__control-label--watchlist`)
-      .addEventListener(`click`, handler);
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    element.querySelector(`.film-details__control-label--watchlist`)
+      .addEventListener(`click`, () => {
+        this._isInWatchList = !this._isInWatchList;
+        this.rerender();
+      });
+
+    element.querySelector(`.film-details__control-label--watched`)
+      .addEventListener(`click`, () => {
+        // if (this._isWatched) {
+        //   this._userRating = null;
+        // }
+        this._isWatched = !this._isWatched;
+        this.rerender();
+      });
+
+    element.querySelector(`.film-details__control-label--favorite`)
+      .addEventListener(`click`, () => {
+        this._isFavorite = !this._isFavorite;
+        this.rerender();
+      });
+
   }
 
-  setWatchedInputClickHandler(handler) {
-    this.getElement().querySelector(`.film-details__control-label--watched`)
-      .addEventListener(`click`, handler);
-  }
+  // setWatchListInputClickHandler(handler) {
+  //   this.getElement().querySelector(`.film-details__control-label--watchlist`)
+  //     .addEventListener(`click`, handler);
+  // }
 
-  setFavoriteInputClickHandler(handler) {
-    this.getElement().querySelector(`.film-details__control-label--favorite`)
-      .addEventListener(`click`, handler);
-  }
+  // setWatchedInputClickHandler(handler) {
+  //   this.getElement().querySelector(`.film-details__control-label--watched`)
+  //     .addEventListener(`click`, handler);
+  // }
+
+  // setFavoriteInputClickHandler(handler) {
+  //   this.getElement().querySelector(`.film-details__control-label--favorite`)
+  //     .addEventListener(`click`, handler);
+  // }
 }
