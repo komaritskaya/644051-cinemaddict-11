@@ -1,7 +1,6 @@
 import MovieController from './movie';
 import NoFilmsComponent from '../components/no-films';
 import SortComponent from '../components/sort';
-import Comment from '../components/comment';
 import ShowMoreButtonComponent from '../components/show-more-btn';
 import AllFilmsContainerComponent from '../components/all-films-container';
 // import ExtraFilmsContainerComponent from '../components/extra-films-container';
@@ -90,17 +89,6 @@ export default class PageController {
 
     this._renderShowMoreButton();
 
-    // this._sortComponent.setSortTypeChangeHandler((sortType) => {
-      // showingAllFilmsCount = SHOWING_ALL_FILMS_COUNT_BY_BUTTON;
-      // const sortedFilms = getSortedFilms(films, sortType, 0, showingAllFilmsCount);
-
-      // filmsContainerElement.innerHTML = ``;
-
-      // renderFilms(filmsContainerElement, sortedFilms);
-
-      // renderShowMoreButton();
-    // });
-
     // const topRatedFilms = getSortedFilms(films, SortType.RATING, 0, EXTRA_FILMS_COUNT).filter((film) => film.rating);
     // const mostCommentedFilms = getSortedFilms(films, SortType.COMMENTS, 0, EXTRA_FILMS_COUNT).filter((film) => film.commentsCount);
 
@@ -153,7 +141,6 @@ export default class PageController {
 
     this._films = [].concat(this._films.slice(0, index), newData, this._films.slice(index + 1));
 
-    console.log(this._films);
     movieController.render(this._films[index]);
   }
 

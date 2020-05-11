@@ -10,14 +10,6 @@ const Mode = {
   DETAILS: `details`,
 };
 
-// const renderComments = (filmDetailsComponent, comments) => {
-//   // const comments = generateComments(film.commentsCount);
-//   const commentsListElement = filmDetailsComponent.getElement().querySelector(`.film-details__comments-list`);
-//   console.log(commentsListElement);
-//   comments.slice(0, comments.length)
-//     .forEach((comment) => render(commentsListElement, new Comment(comment)));
-// };
-
 export default class MovieController {
   constructor(container, onDataChange, onViewChange) {
     this._container = container;
@@ -43,23 +35,18 @@ export default class MovieController {
     this._comments = generateComments(film.commentsCount);
 
     this._filmCardComponent.setWatchListButtonClickHandler(() => {
-      console.log(film);
       this._onDataChange(this, film, Object.assign({}, film, {
         isInWatchList: !film.isInWatchList,
       }));
     });
 
     this._filmCardComponent.setWatchedButtonClickHandler(() => {
-      console.log(film);
-
       this._onDataChange(this, film, Object.assign({}, film, {
         isWatched: !film.isWatched,
       }));
     });
 
     this._filmCardComponent.setFavoriteButtonClickHandler(() => {
-      console.log(film);
-
       this._onDataChange(this, film, Object.assign({}, film, {
         isFavorite: !film.isFavorite,
       }));
@@ -71,25 +58,6 @@ export default class MovieController {
     } else {
       render(this._container, this._filmCardComponent);
     }
-
-    // this._filmDetailsComponent.setWatchListInputClickHandler(() => {
-    //   this._onDataChange(this, film, Object.assign({}, film, {
-    //     isInWatchList: !film.isInWatchList,
-    //   }));
-    //   console.log(film);
-    // });
-
-    // this._filmDetailsComponent.setWatchedInputClickHandler(() => {
-    //   this._onDataChange(this, film, Object.assign({}, film, {
-    //     isWatched: !film.isWatched,
-    //   }));
-    // });
-
-    // this._filmDetailsComponent.setFavoriteInputClickHandler(() => {
-    //   this._onDataChange(this, film, Object.assign({}, film, {
-    //     isFavorite: !film.isFavorite,
-    //   }));
-    // });
 
     this._filmCardComponent.setDetailsOpenersClickHandler(() => {
       this._openDetails();
@@ -139,5 +107,5 @@ export default class MovieController {
     const commentsListElement = this._filmDetailsComponent.getElement().querySelector(`.film-details__comments-list`);
     this._comments.slice(0, this._comments.length)
       .forEach((comment) => render(commentsListElement, new Comment(comment)));
-  };
+  }
 }
