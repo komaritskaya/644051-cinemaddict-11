@@ -1,3 +1,4 @@
+import {nanoid} from 'nanoid';
 import {
   getSingleRandomItemFromArray,
   getMultipleRandomItemsFromArray,
@@ -89,6 +90,7 @@ const generateDuration = () => {
 };
 
 export const generateFilm = () => ({
+  id: nanoid(),
   name: getSingleRandomItemFromArray(NAMES),
   poster: getSingleRandomItemFromArray(POSTERS),
   description: getRandomText(),

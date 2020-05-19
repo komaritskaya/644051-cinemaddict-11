@@ -78,6 +78,12 @@ export default class MovieController {
     }
   }
 
+  destroy() {
+    remove(this._filmCardComponent);
+    // remove(this._filmDetailsComponent);
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
+  }
+
   _openDetails() {
     this._onViewChange();
 
