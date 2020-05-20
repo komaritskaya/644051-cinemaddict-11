@@ -1,4 +1,4 @@
-import MovieController from './movie';
+import MovieController, {Mode as MovieControllerMode} from './movie';
 import NoFilmsComponent from '../components/no-films';
 import SortComponent from '../components/sort';
 import ShowMoreButtonComponent from '../components/show-more-btn';
@@ -143,11 +143,11 @@ export default class PageController {
     this._renderShowMoreButton();
   }
 
-  _onDataChange(movieController, oldData, newData) {
+  _onDataChange(oldData, newData) {
     const isSuccess = this._filmsModel.updateFilm(oldData.id, newData);
 
     if (isSuccess) {
-      movieController.render(newData);
+      this._updateFilms(this._showingFilmsCount);
     }
   }
 

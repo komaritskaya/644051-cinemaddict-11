@@ -34,7 +34,9 @@ export default class Movies {
       return false;
     }
 
+    console.log(this._films);
     this._films = [].concat(this._films.slice(0, index), film, this._films.slice(index + 1));
+    console.log(this._films);
 
     this._callHandlers(this._dataChangeHandlers);
 

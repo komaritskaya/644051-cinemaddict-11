@@ -35,19 +35,19 @@ export default class MovieController {
     this._comments = generateComments(film.commentsCount);
 
     this._filmCardComponent.setWatchListButtonClickHandler(() => {
-      this._onDataChange(this, film, Object.assign({}, film, {
+      this._onDataChange(film, Object.assign({}, film, {
         isInWatchList: !film.isInWatchList,
       }));
     });
 
     this._filmCardComponent.setWatchedButtonClickHandler(() => {
-      this._onDataChange(this, film, Object.assign({}, film, {
+      this._onDataChange(film, Object.assign({}, film, {
         isWatched: !film.isWatched,
       }));
     });
 
     this._filmCardComponent.setFavoriteButtonClickHandler(() => {
-      this._onDataChange(this, film, Object.assign({}, film, {
+      this._onDataChange(film, Object.assign({}, film, {
         isFavorite: !film.isFavorite,
       }));
     });
