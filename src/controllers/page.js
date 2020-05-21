@@ -39,7 +39,7 @@ const getSortedFilms = (films, sortType, from, to) => {
       sortedFilms = showingFilms.sort((a, b) => b.rating - a.rating);
       break;
     case SortType.COMMENTS:
-      sortedFilms = showingFilms.sort((a, b) => b.commentsCount - a.commentsCount);
+      sortedFilms = showingFilms.sort((a, b) => b.comments.length - a.comments.length);
       break;
     case SortType.DEFAULT:
       sortedFilms = showingFilms;
@@ -91,7 +91,7 @@ export default class PageController {
     this._renderShowMoreButton();
 
     // const topRatedFilms = getSortedFilms(films, SortType.RATING, 0, EXTRA_FILMS_COUNT).filter((film) => film.rating);
-    // const mostCommentedFilms = getSortedFilms(films, SortType.COMMENTS, 0, EXTRA_FILMS_COUNT).filter((film) => film.commentsCount);
+    // const mostCommentedFilms = getSortedFilms(films, SortType.COMMENTS, 0, EXTRA_FILMS_COUNT).filter((film) => film.comments.length);
 
     // if (topRatedFilms.length) {
     //   const extraFilmsContainerComponent = new ExtraFilmsContainerComponent(ExtraFilmsListName.TOP_RATED);
