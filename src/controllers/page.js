@@ -1,4 +1,4 @@
-import MovieController, {Mode as MovieControllerMode} from './movie';
+import MovieController from './movie';
 import NoFilmsComponent from '../components/no-films';
 import SortComponent from '../components/sort';
 import ShowMoreButtonComponent from '../components/show-more-btn';

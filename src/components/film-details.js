@@ -1,8 +1,11 @@
 import moment from 'moment';
+import he from 'he';
+import {nanoid} from 'nanoid';
 import {render} from '../utils/render';
 import Comment from './comment';
 import AbstractSmartComponent from "./abstract-smart-component";
 import {ControlsElement} from '../utils/controls';
+import {KeyCode} from '../utils/common';
 
 const EMOJI = [
   `smile`,
@@ -191,7 +194,9 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._isFavorite = film.isFavorite;
     this._comments = film.comments;
     this._closeHandler = null;
+
     this._currentEmoji = ``;
+    this._newComment = ``;
 
     this._renderComments();
     this._subscribeOnEvents();
@@ -211,7 +216,9 @@ export default class FilmDetails extends AbstractSmartComponent {
     const form = this.getElement().querySelector(`.film-details__inner`);
     const formData = new FormData(form);
 
-    return parseFormData(formData);
+    return Object.assign({}, parseFormData(formData), {
+      comments: this._comments,
+    });
   }
 
   recoveryListeners() {
@@ -221,6 +228,7 @@ export default class FilmDetails extends AbstractSmartComponent {
 
   rerender() {
     super.rerender();
+    this.getElement().scrollTop = this._elementScrollTop;
     this._renderComments();
   }
 
@@ -230,6 +238,7 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._isWatched = film.isWatched;
     this._isFavorite = film.isFavorite;
     this._currentEmoji = ``;
+    this._newComment = ``;
 
     this.rerender();
   }
@@ -252,31 +261,35 @@ export default class FilmDetails extends AbstractSmartComponent {
 
     element.querySelector(`.film-details__control-label--watchlist`)
       .addEventListener(`click`, () => {
+        this._elementScrollTop = this.getElement().scrollTop;
         this._isInWatchList = !this._isInWatchList;
         this.rerender();
       });
 
     element.querySelector(`.film-details__control-label--watched`)
       .addEventListener(`click`, () => {
+        this._elementScrollTop = this.getElement().scrollTop;
         this._isWatched = !this._isWatched;
         this.rerender();
       });
 
     element.querySelector(`.film-details__control-label--favorite`)
       .addEventListener(`click`, () => {
+        this._elementScrollTop = this.getElement().scrollTop;
         this._isFavorite = !this._isFavorite;
         this.rerender();
       });
 
     const emojiListElement = element.querySelector(`.film-details__emoji-list`);
     emojiListElement.addEventListener(`click`, (evt) => {
+      this._elementScrollTop = this.getElement().scrollTop;
       if (evt.target.tagName !== `INPUT`) {
         return;
       }
       if (this._currentEmoji === evt.target.value) {
         this._currentEmoji = ``;
       } else {
-        this._currentEmoji = evt.target.value;
+        this._currentEmoji = evt.target.value.trim();
       }
 
       this.rerender();
@@ -285,6 +298,7 @@ export default class FilmDetails extends AbstractSmartComponent {
     const commentsListElement = element.querySelector(`.film-details__comments-list`);
     commentsListElement.addEventListener(`click`, (evt) => {
       evt.preventDefault();
+      this._elementScrollTop = this.getElement().scrollTop;
       if (evt.target.tagName !== `BUTTON`) {
         return;
       }
@@ -296,6 +310,31 @@ export default class FilmDetails extends AbstractSmartComponent {
       this._comments = [].concat(this._comments.slice(0, index), this._comments.slice(index + 1));
 
       this.rerender();
+    });
+
+    element.querySelector(`.film-details__comment-input`).addEventListener(`input`, (evt) => {
+      this._newComment = evt.target.value;
+    });
+
+    element.addEventListener(`keydown`, (evt) => {
+      if (evt.ctrlKey && evt.keyCode === KeyCode.ENTER_KEY) {
+        if (this._currentEmoji && this._newComment) {
+          this._elementScrollTop = this.getElement().scrollTop;
+
+          const newComment = {
+            id: nanoid(),
+            text: he.encode(this._newComment),
+            emoji: this._currentEmoji,
+            user: `You`,
+            date: new Date(),
+          };
+
+          this._comments.push(newComment);
+          this._currentEmoji = ``;
+          this._newComment = ``;
+          this.rerender();
+        }
+      }
     });
   }
 }
