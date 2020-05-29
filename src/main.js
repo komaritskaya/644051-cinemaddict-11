@@ -2,6 +2,7 @@ import UserInfoComponent from './components/user-info';
 import FilterController from "./controllers/filter.js";
 import FilmsSectionComponent from './components/films-section';
 import FilmsCountComponent from './components/films-count';
+import StatisticsComponent from "./components/statistics.js";
 import FilmsModel from './models/movies';
 import {render} from './utils/render';
 import PageController from './controllers/page';
@@ -22,6 +23,11 @@ render(headerElement, new UserInfoComponent());
 const filterController = new FilterController(mainElement, filmsModel);
 filterController.render();
 
+const statisticsComponent = new StatisticsComponent(filmsModel);
+render(mainElement, statisticsComponent);
+console.log(statisticsComponent.getElement());
+statisticsComponent.hide();
+
 const filmsSectionComponent = new FilmsSectionComponent();
 render(mainElement, filmsSectionComponent);
 
@@ -31,3 +37,7 @@ pageController.render(allFilms);
 const footerStatisticsElement = document.querySelector(`.footer__statistics`);
 render(footerStatisticsElement, new FilmsCountComponent(ALL_FILMS_COUNT));
 
+filterController.setStatsClickHandler(() => {
+  pageController.hide();
+  statisticsComponent.show();
+});

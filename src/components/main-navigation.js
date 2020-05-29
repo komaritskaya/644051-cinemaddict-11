@@ -53,4 +53,21 @@ export default class MainNavigation extends AbstractComponent {
       handler(filterName);
     });
   }
+
+  setStatsClickHandler(handler) {
+    this.getElement().querySelector(`.main-navigation__additional`).addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+
+      if (evt.target.classList.contains(`main-navigation__additional--active`)) {
+        return;
+      }
+
+      this.getElement().querySelector(`.main-navigation__item--active`).classList.remove(`main-navigation__item--active`);
+      evt.target.classList.add(`main-navigation__additional--active`);
+
+      handler();
+    });
+
+  };
+
 }
