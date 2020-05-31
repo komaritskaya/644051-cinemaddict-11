@@ -1,3 +1,4 @@
+import moment from 'moment';
 import FilmCardComponent from "../components/film-card.js";
 import FilmDetailsComponent from "../components/film-details.js";
 import {render, replace, remove} from "../utils/render.js";
@@ -102,6 +103,7 @@ export default class MovieController {
       evt.preventDefault();
       this._onDataChange(film, Object.assign({}, film, {
         isWatched: !film.isWatched,
+        watchDate: !film.isWatched ? new Date : null,
       }));
     });
 

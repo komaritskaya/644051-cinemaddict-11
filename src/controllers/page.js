@@ -74,10 +74,12 @@ export default class PageController {
 
   hide() {
     this._container.hide();
+    this._sortComponent.hide();
   }
 
   show() {
     this._container.show();
+    this._sortComponent.show();
   }
 
   render() {
@@ -156,6 +158,8 @@ export default class PageController {
 
     if (isSuccess) {
       this._updateFilms(this._showingFilmsCount);
+      console.log(oldData);
+      console.log(newData);
     }
   }
 

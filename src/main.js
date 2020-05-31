@@ -11,6 +11,8 @@ import {generateFilms} from './mock/film-card';
 const ALL_FILMS_COUNT = 23;
 
 const allFilms = generateFilms(ALL_FILMS_COUNT);
+const watchedFilms = allFilms.filter(({isWatched}) => isWatched);
+
 const filmsModel = new FilmsModel();
 filmsModel.setFilms(allFilms);
 
@@ -18,12 +20,12 @@ const bodyElement = document.querySelector(`body`);
 const headerElement = bodyElement.querySelector(`.header`);
 const mainElement = bodyElement.querySelector(`.main`);
 
-render(headerElement, new UserInfoComponent());
+render(headerElement, new UserInfoComponent(watchedFilms.length));
 
 const filterController = new FilterController(mainElement, filmsModel);
 filterController.render();
 
-const statisticsComponent = new StatisticsComponent(filmsModel);
+const statisticsComponent = new StatisticsComponent(watchedFilms);
 render(mainElement, statisticsComponent);
 console.log(statisticsComponent.getElement());
 statisticsComponent.hide();

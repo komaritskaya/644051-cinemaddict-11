@@ -1,9 +1,26 @@
+import moment from "moment";
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import moment from "moment";
+import {getUserRank} from '../utils/user';
 
 const BAR_HEIGHT = 50;
+const PERIODS = [`All time`, `Today`, `Week`, `Month`, `Year`];
+
+const getInitialDateByPeriod = (period) => {
+  switch(period) {
+    case `today`:
+      return moment().startOf('day');
+    case `week`:
+      return moment().startOf('week');
+    case `month`:
+      return moment().startOf('month');
+    case `year`:
+      return moment().startOf('year');
+    default:
+      return null;
+  }
+};
 
 const getGenres = (films) => {
   return films.reduce((acc, {genres}) => {
@@ -17,52 +34,147 @@ const getGenres = (films) => {
 };
 
 const getFilmsByGenre = (genre, films) => {
-  const filteredFilms = films.filter((film) => film.genre === genre);
+  const filteredFilms = films.filter((film) => film.genres.includes(genre));
   return filteredFilms.length;
 };
 
-const createStatisticsTemplate = () => {
+const getTopGenre = (films) => {
+  return getGenres(films).reduce((acc, genre) => getFilmsByGenre(genre, films) > getFilmsByGenre(acc, films) ? genre : acc);
+};
+
+const getTotalRuntime = (films) => {
+  return films.reduce((acc, {duration}) => acc.add(duration), moment.duration(0, `minutes`));
+};
+
+const createPeriodsMarkup = (currentPeriod) => {
+  return PERIODS.map((it) => {
+    const name = it.toLowerCase().replace(/\s/, `-`);
+    return (
+      `<input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-${name}" value="${name}" ${name === currentPeriod ? `checked` : ``}>
+      <label for="statistic-${name}" class="statistic__filters-label">${it}</label>`
+    );
+  }).join(`\n`);
+}
+
+const getFilmsByPeriod = (films, period) => {
+  const initialDate = getInitialDateByPeriod(period);
+  console.log(films);
+  console.log(period);
+  if (initialDate) {
+    return films.filter((film) => moment(film.watchDate).isSameOrAfter(initialDate));
+  } else {
+  return films;
+  }
+}
+
+const renderChart = (ctx, films) => {
+  const genres = getGenres(films);
+  ctx.height = BAR_HEIGHT * genres.length;
+
+  const myChart = new Chart(ctx, {
+    plugins: [ChartDataLabels],
+    type: `horizontalBar`,
+    data: {
+      labels: genres,
+      datasets: [{
+        data: genres.map((genre) => getFilmsByGenre(genre, films)),
+        backgroundColor: `#ffe800`,
+        hoverBackgroundColor: `#ffe800`,
+        anchor: `start`,
+        barThickness: 24,
+      }]
+    },
+    options: {
+      plugins: {
+        datalabels: {
+          font: {
+            size: 20
+          },
+          color: `#ffffff`,
+          anchor: 'start',
+          align: 'start',
+          offset: 40,
+        }
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: `#ffffff`,
+            padding: 100,
+            fontSize: 20
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+        }],
+        xAxes: [{
+          ticks: {
+            display: false,
+            beginAtZero: true
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+        }],
+      },
+      legend: {
+        display: false
+      },
+      tooltips: {
+        enabled: false
+      }
+    }
+  });
+
+  return myChart;
+}
+
+const createStatisticsTemplate = (films, period) => {
+
+  const userRank = getUserRank(films.length);
+  const periodsMarkup = createPeriodsMarkup(period);
+
+  let filmsDataMarkup;
+  if (!films.length) {
+    filmsDataMarkup = `<p>No movies watched during this period</p>`;
+  } else {
+    const totalHours = Math.floor(getTotalRuntime(films).asHours());
+    const totalMinutes = getTotalRuntime(films).minutes();
+    const topGenre = getTopGenre(films);
+    filmsDataMarkup = (
+      `<ul class="statistic__text-list">
+        <li class="statistic__text-item">
+          <h4 class="statistic__item-title">You watched</h4>
+          <p class="statistic__item-text">${films.length} <span class="statistic__item-description">movies</span></p>
+        </li>
+        <li class="statistic__text-item">
+          <h4 class="statistic__item-title">Total duration</h4>
+          <p class="statistic__item-text">${totalHours} <span class="statistic__item-description">h</span> ${totalMinutes} <span class="statistic__item-description">m</span></p>
+        </li>
+        <li class="statistic__text-item">
+          <h4 class="statistic__item-title">Top genre</h4>
+          <p class="statistic__item-text">${topGenre}</p>
+        </li>
+      </ul>`
+    );
+  }
+
   return (
     `<section class="statistic">
       <p class="statistic__rank">
         Your rank
         <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-        <span class="statistic__rank-label">Sci-Fighter</span>
+        <span class="statistic__rank-label">${userRank}</span>
       </p>
 
       <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
         <p class="statistic__filters-description">Show stats:</p>
-
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
-        <label for="statistic-all-time" class="statistic__filters-label">All time</label>
-
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today">
-        <label for="statistic-today" class="statistic__filters-label">Today</label>
-
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" value="week">
-        <label for="statistic-week" class="statistic__filters-label">Week</label>
-
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" value="month">
-        <label for="statistic-month" class="statistic__filters-label">Month</label>
-
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year">
-        <label for="statistic-year" class="statistic__filters-label">Year</label>
+        ${periodsMarkup}
       </form>
 
-      <ul class="statistic__text-list">
-        <li class="statistic__text-item">
-          <h4 class="statistic__item-title">You watched</h4>
-          <p class="statistic__item-text">22 <span class="statistic__item-description">movies</span></p>
-        </li>
-        <li class="statistic__text-item">
-          <h4 class="statistic__item-title">Total duration</h4>
-          <p class="statistic__item-text">130 <span class="statistic__item-description">h</span> 22 <span class="statistic__item-description">m</span></p>
-        </li>
-        <li class="statistic__text-item">
-          <h4 class="statistic__item-title">Top genre</h4>
-          <p class="statistic__item-text">Sci-Fi</p>
-        </li>
-      </ul>
+      ${filmsDataMarkup}
 
       <div class="statistic__chart-wrap">
         <canvas class="statistic__chart" width="1000"></canvas>
@@ -77,26 +189,62 @@ export default class Statistics extends AbstractSmartComponent {
     super();
 
     this._films = films;
+    this._shownFilms = films;
+    this._period = `all-time`;
 
+
+    this._chart = null;
+    this._renderChart();
+    // this._onPeriodChange();
+    this._subscribeOnEvents();
 
   }
 
   getTemplate() {
-    console.log(this._films);
-    return createStatisticsTemplate();
+    return createStatisticsTemplate(this._shownFilms, this._period);
   }
 
   show() {
     super.show();
+
+    // this._films = updatedFilms;
+    // this._period = `all-time`;
+    this.rerender();
   }
 
-  recoveryListeners() {}
+  recoveryListeners() {
+    this._subscribeOnEvents();
+  }
 
   rerender() {
+    console.log(this._period);
+    console.log(this._films);
+    console.log(this._shownFilms);
+
     super.rerender();
+
+    this._renderChart();
+
   }
 
-  _renderCharts() {}
+  _renderChart() {
+    const statisticsCtx = this.getElement().querySelector(`.statistic__chart`);
+    // const films = getMoviesByDateRange(this._films, this._filter);
+    const films = this._shownFilms;
+
+    this._chart = renderChart(statisticsCtx, films);
+  }
 
   _resetCharts() {}
+
+  _subscribeOnEvents() {
+    this.getElement().querySelector(`.statistic__filters`)
+      .addEventListener(`change`, (evt) => {
+        evt.preventDefault();
+        this._period = evt.target.value;
+        this._shownFilms = getFilmsByPeriod(this._films, evt.target.value);
+        this.rerender();
+      });
+  }
+
 }
