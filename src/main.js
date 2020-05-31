@@ -22,24 +22,31 @@ const mainElement = bodyElement.querySelector(`.main`);
 
 render(headerElement, new UserInfoComponent(watchedFilms.length));
 
-const filterController = new FilterController(mainElement, filmsModel);
+const filmsSectionComponent = new FilmsSectionComponent();
+const pageController = new PageController(filmsSectionComponent, filmsModel);
+const statisticsComponent = new StatisticsComponent(watchedFilms);
+const filterController = new FilterController(mainElement, filmsModel, pageController, statisticsComponent);
+
 filterController.render();
 
-const statisticsComponent = new StatisticsComponent(watchedFilms);
 render(mainElement, statisticsComponent);
 console.log(statisticsComponent.getElement());
 statisticsComponent.hide();
 
-const filmsSectionComponent = new FilmsSectionComponent();
 render(mainElement, filmsSectionComponent);
 
-const pageController = new PageController(filmsSectionComponent, filmsModel);
 pageController.render(allFilms);
 
 const footerStatisticsElement = document.querySelector(`.footer__statistics`);
 render(footerStatisticsElement, new FilmsCountComponent(ALL_FILMS_COUNT));
 
-filterController.setStatsClickHandler(() => {
-  pageController.hide();
-  statisticsComponent.show();
-});
+// filterController.setStatsClickHandler(() => {
+//   console.log(`aaaaa`);
+//   if (!document.querySelector('.statistic').classList.contains(`visually-hidden`)) {
+//     pageController.show();
+//     statisticsComponent.hide();
+//   } else {
+//     pageController.hide();
+//     statisticsComponent.show();
+//   }
+// });

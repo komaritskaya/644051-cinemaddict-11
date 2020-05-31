@@ -131,9 +131,9 @@ const renderChart = (ctx, films) => {
   return myChart;
 }
 
-const createStatisticsTemplate = (films, period) => {
+const createStatisticsTemplate = (totalFilms, films, period) => {
 
-  const userRank = getUserRank(films.length);
+  const userRank = getUserRank(totalFilms.length);
   const periodsMarkup = createPeriodsMarkup(period);
 
   let filmsDataMarkup;
@@ -201,15 +201,19 @@ export default class Statistics extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createStatisticsTemplate(this._shownFilms, this._period);
+    return createStatisticsTemplate(this._films, this._shownFilms, this._period);
   }
 
   show() {
     super.show();
 
-    // this._films = updatedFilms;
-    // this._period = `all-time`;
     this.rerender();
+  }
+
+  hide() {
+    // this._resetCharts();
+    super.hide();
+
   }
 
   recoveryListeners() {
@@ -235,7 +239,15 @@ export default class Statistics extends AbstractSmartComponent {
     this._chart = renderChart(statisticsCtx, films);
   }
 
-  _resetCharts() {}
+  _resetCharts() {
+    this._films = films;
+    this._shownFilms = films;
+    this._period = `all-time`;
+
+
+    this._chart = null;
+    this.rerender();
+  }
 
   _subscribeOnEvents() {
     this.getElement().querySelector(`.statistic__filters`)

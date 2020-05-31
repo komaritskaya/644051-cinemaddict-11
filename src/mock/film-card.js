@@ -93,7 +93,6 @@ const AGE_LIMITS = [0, 6, 12, 16, 18];
 
 const generateDurationInMinutes = () => {
   const minutes = moment.duration(getRandomInt(0, 180), `minutes`);
-  console.log(minutes);
   return minutes;
 };
 
