@@ -277,7 +277,7 @@ export default class FilmDetails extends AbstractSmartComponent {
       .addEventListener(`click`, () => {
         this._elementScrollTop = this.getElement().scrollTop;
         this._isWatched = !this._isWatched;
-        this._watchDate = this._isWatched ? new Date : null;
+        this._watchDate = this._isWatched ? new Date() : null;
         this.rerender();
       });
 

@@ -45,8 +45,6 @@ export default class MainNavigation extends AbstractComponent {
         return;
       }
 
-      console.log(evt.target);
-
       if (this.getElement().querySelector(`.main-navigation__item--active`)) {
         this.getElement().querySelector(`.main-navigation__item--active`).classList.remove(`main-navigation__item--active`);
       }
@@ -66,7 +64,5 @@ export default class MainNavigation extends AbstractComponent {
 
       handler();
     });
-
-  };
-
+  }
 }

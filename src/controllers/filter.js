@@ -79,28 +79,6 @@ export default class FilterController {
           break;
       }
       this.render(this._mode);
-    })
+    });
   }
-
-
-
-  // setStatsClickHandler() {
-  //   // _subscribeOnEvents() {}
-  //   switch (this._mode) {
-  //     case `page`:
-  //       this._pageController.hide();
-  //       // this._sortComponent.hide();
-  //       this._statsComponent.show();
-  //       this._mode = `stats`;
-  //       break;
-  //     case `stats`:
-  //       this._pageController.show();
-  //       // this._sortComponent.show();
-  //       this._statsComponent.hide();
-  //       this._mode = `page`;
-  //   }
-    // this._filterComponent.setStatsClickHandler(handler);
-
-    // this._statsClickHandler = handler;
-
 }

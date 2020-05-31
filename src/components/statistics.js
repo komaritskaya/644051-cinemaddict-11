@@ -8,15 +8,15 @@ const BAR_HEIGHT = 50;
 const PERIODS = [`All time`, `Today`, `Week`, `Month`, `Year`];
 
 const getInitialDateByPeriod = (period) => {
-  switch(period) {
+  switch (period) {
     case `today`:
-      return moment().startOf('day');
+      return moment().startOf(`day`);
     case `week`:
-      return moment().startOf('week');
+      return moment().startOf(`week`);
     case `month`:
-      return moment().startOf('month');
+      return moment().startOf(`month`);
     case `year`:
-      return moment().startOf('year');
+      return moment().startOf(`year`);
     default:
       return null;
   }
@@ -28,7 +28,7 @@ const getGenres = (films) => {
       if (!acc.includes(it)) {
         acc.push(it);
       }
-  });
+    });
     return acc;
   }, []);
 };
@@ -54,18 +54,16 @@ const createPeriodsMarkup = (currentPeriod) => {
       <label for="statistic-${name}" class="statistic__filters-label">${it}</label>`
     );
   }).join(`\n`);
-}
+};
 
 const getFilmsByPeriod = (films, period) => {
   const initialDate = getInitialDateByPeriod(period);
-  console.log(films);
-  console.log(period);
   if (initialDate) {
     return films.filter((film) => moment(film.watchDate).isSameOrAfter(initialDate));
   } else {
-  return films;
+    return films;
   }
-}
+};
 
 const renderChart = (ctx, films) => {
   const genres = getGenres(films);
@@ -91,8 +89,8 @@ const renderChart = (ctx, films) => {
             size: 20
           },
           color: `#ffffff`,
-          anchor: 'start',
-          align: 'start',
+          anchor: `start`,
+          align: `start`,
           offset: 40,
         }
       },
@@ -129,7 +127,7 @@ const renderChart = (ctx, films) => {
   });
 
   return myChart;
-}
+};
 
 const createStatisticsTemplate = (totalFilms, films, period) => {
 
@@ -195,7 +193,6 @@ export default class Statistics extends AbstractSmartComponent {
 
     this._chart = null;
     this._renderChart();
-    // this._onPeriodChange();
     this._subscribeOnEvents();
 
   }
@@ -211,9 +208,7 @@ export default class Statistics extends AbstractSmartComponent {
   }
 
   hide() {
-    // this._resetCharts();
     super.hide();
-
   }
 
   recoveryListeners() {
@@ -221,33 +216,27 @@ export default class Statistics extends AbstractSmartComponent {
   }
 
   rerender() {
-    console.log(this._period);
-    console.log(this._films);
-    console.log(this._shownFilms);
-
     super.rerender();
 
     this._renderChart();
-
   }
 
   _renderChart() {
     const statisticsCtx = this.getElement().querySelector(`.statistic__chart`);
-    // const films = getMoviesByDateRange(this._films, this._filter);
     const films = this._shownFilms;
 
     this._chart = renderChart(statisticsCtx, films);
   }
 
-  _resetCharts() {
-    this._films = films;
-    this._shownFilms = films;
-    this._period = `all-time`;
+  // _resetCharts() {
+  //   this._films = films;
+  //   this._shownFilms = films;
+  //   this._period = `all-time`;
 
 
-    this._chart = null;
-    this.rerender();
-  }
+  //   this._chart = null;
+  //   this.rerender();
+  // }
 
   _subscribeOnEvents() {
     this.getElement().querySelector(`.statistic__filters`)
