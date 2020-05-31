@@ -89,6 +89,10 @@ const createFilmDetailsTemplate = (film, options = {}) => {
   const watchedInput = createControlsElementMarkup(ControlsElement.WATCHED, isWatched);
   const favoriteInput = createControlsElementMarkup(ControlsElement.FAVORITE, isFavorite);
 
+  const hoursString = duration.hours() ? `${duration.hours()}h ` : ``;
+  const minutesString = duration.minutes() ? `${duration.minutes()}m` : ``;
+  const durationString = `${hoursString}${minutesString}`;
+
   return (
     `<section class="film-details">
       <form class="film-details__inner" action="" method="get">
@@ -134,7 +138,7 @@ const createFilmDetailsTemplate = (film, options = {}) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
-                  <td class="film-details__cell">${duration}</td>
+                  <td class="film-details__cell">${durationString}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Country</td>
@@ -191,6 +195,7 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._film = film;
     this._isInWatchList = film.isInWatchList;
     this._isWatched = film.isWatched;
+    this._watchDate = film.watchDate;
     this._isFavorite = film.isFavorite;
     this._comments = film.comments;
     this._closeHandler = null;
@@ -218,6 +223,7 @@ export default class FilmDetails extends AbstractSmartComponent {
 
     return Object.assign({}, parseFormData(formData), {
       comments: this._comments,
+      watchDate: this._watchDate,
     });
   }
 
@@ -236,6 +242,7 @@ export default class FilmDetails extends AbstractSmartComponent {
     const film = this._film;
     this._isInWatchList = film.isInWatchList;
     this._isWatched = film.isWatched;
+    this._watchDate = film.watchDate;
     this._isFavorite = film.isFavorite;
     this._currentEmoji = ``;
     this._newComment = ``;
@@ -270,6 +277,7 @@ export default class FilmDetails extends AbstractSmartComponent {
       .addEventListener(`click`, () => {
         this._elementScrollTop = this.getElement().scrollTop;
         this._isWatched = !this._isWatched;
+        this._watchDate = this._isWatched ? new Date() : null;
         this.rerender();
       });
 
