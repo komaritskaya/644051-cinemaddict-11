@@ -63,6 +63,8 @@ export default class Movie {
   }
 
   static clone(data) {
+    console.log(data);
+    console.log(data.toRAW(true));
     return new Movie(data.toRAW(true));
   }
 }
